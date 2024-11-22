@@ -1,20 +1,21 @@
 import { Router } from 'express'
-import { paymentModel } from '../schema/payment.schema'
+import { paymentModel } from '../schema/payment.schema.js'
 
-paymentRouter = Router()
+const paymentRouter = Router()
 
 paymentRouter.get('/monthly-summery', async (req, res) => {
     console.log('reached code')
 
-    const { userId, startDate, endDate } = req.body
+    // const { userId, startDate, endDate } = req.body
+    const userId = "u123"
 
-    const data = paymentModel.aggregate([
-        { $match: { status: paid } },
-        { $group: { _id: userId, totalAmount: { $sum: $amount } } },
+    const data = await paymentModel.aggregate([
+        { $match: { status: 'paid' } },
+        { $group: { _id: 'userId', totalAmount: { $sum: '$amount' } } },
         { $sort: { totalAmount: -1 } },
     ])
 
-    console.log('Total payments per user:', results);
+    console.log('Total payments per user:', data);
     res.status(200).json({
         data
     })
